@@ -1,6 +1,4 @@
 from flask import Flask, request, render_template, jsonify
-import requests
-from bs4 import BeautifulSoup
 from tensorflow.keras.models import load_model
 import pickle
 from tensorflow.keras.preprocessing.sequence import pad_sequences
