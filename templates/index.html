@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sarcasm Detector</title>
+</head>
+<body>
+    <h1>Sarcasm Detector</h1>
+    <form action="/predict" method="post">
+        <label for="url">Enter URL:</label>
+        <input type="text" id="url" name="url" required>
+        <button type="submit">Predict</button>
+    </form>
+    <div id="result"></div>
+    <script>
+        document.querySelector('form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const form = event.target;
+            const url = form.url.value;
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ url: url }),
+            });
+
+            const result = await response.json();
+            const resultDiv = document.getElementById('result');
+            if (response.ok) {
+                resultDiv.innerHTML = `
+                    <h2>Title: ${result.title}</h2>
+                    <h3>Sarcastic: ${result.sarcastic ? 'Yes' : 'No'}</h3>
+                    <h2>How sure am i?: ${result.score}</h2>
+
+                `;
+            } else {
+                resultDiv.innerHTML = `<h2>Error: ${result.error}</h2>`;
+            }
+        });
+    </script>
+</body>
+</html>
