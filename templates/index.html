@@ -4,15 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sarcasm Detector</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 2em;
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 1em;
+            color: #333;
+        }
+        form {
+            background: #ffffff;
+            padding: 2em;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        #result {
+            margin-top: 1em;
+            padding: 1em;
+            border-radius: 5px;
+        }
+        .result-title {
+            font-size: 1.5em;
+            color: #007bff;
+        }
+        .result-sarcastic {
+            font-size: 1.2em;
+            color: #dc3545;
+        }
+        .result-score {
+            font-size: 1.2em;
+            color: #28a745;
+        }
+        .alert-info .result-sarcastic {
+            color: #17a2b8;
+        }
+        .alert-danger .result-title, .alert-danger .result-score {
+            color: #dc3545;
+        }
+    </style>
 </head>
 <body>
-    <h1>Sarcasm Detector</h1>
-    <form action="/predict" method="post">
-        <label for="url">Enter URL:</label>
-        <input type="text" id="url" name="url" required>
-        <button type="submit">Predict</button>
-    </form>
-    <div id="result"></div>
+    <div class="container">
+        <h1>Sarcasm Detector</h1>
+        <form action="/predict" method="post">
+            <div class="form-group">
+                <label for="url">Enter URL:</label>
+                <input type="text" id="url" name="url" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Predict</button>
+        </form>
+        <div id="result" class="alert" role="alert" style="display: none;"></div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         document.querySelector('form').addEventListener('submit', async function (event) {
             event.preventDefault();
@@ -28,15 +82,19 @@
 
             const result = await response.json();
             const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
             if (response.ok) {
                 resultDiv.innerHTML = `
-                    <h2>Title: ${result.title}</h2>
-                    <h3>Sarcastic: ${result.sarcastic ? 'Yes' : 'No'}</h3>
-                    <h2>How sure am i?: ${result.score}</h2>
-
+                    <h2 class="result-title">Title: ${result.title}</h2>
+                    <h3 class="result-sarcastic">Sarcastic: ${result.sarcastic ? 'Yes' : 'No'}</h3>
+                    <h2 class="result-score">Confidence Score: ${result.score}</h2>
                 `;
+                resultDiv.classList.remove('alert-danger');
+                resultDiv.classList.add('alert-info');
             } else {
-                resultDiv.innerHTML = `<h2>Error: ${result.error}</h2>`;
+                resultDiv.innerHTML = `<h2 class="result-title">Error: ${result.error}</h2>`;
+                resultDiv.classList.remove('alert-info');
+                resultDiv.classList.add('alert-danger');
             }
         });
     </script>
